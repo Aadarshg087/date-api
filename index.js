@@ -28,18 +28,16 @@ app.get("/api/:date", function (req, res) {
   // const temp = "2025-06-05T08:30:00Z";
   // const timestamp = Date.parse(temp);
   // console.log(timestamp);
+  const d = req.params.data;
+  const momentDate = /^\d+$/.test(d) ? moment.unix(parseInt(d)) : moment(d);
 
-  const d = req.params.date;
-  const date = Date.parse(d);
-  if (date === NaN) {
-    return res.status(400).json({
-      error: "Invalid Date",
-    });
+  if (!momentDate.isValid()) {
+    return res.status(400).json({ error: "Invalid Date" });
   }
-  const dd = new Date(d);
+
   return res.status(200).json({
-    utc: dd.toUTCString(),
-    unix: date,
+    unix: momentDate.unix(),
+    utc: momentDate.toDate().toUTCString(),
   });
 });
 
